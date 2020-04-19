@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Face Recognition IoT</h2><br/>
+<br/>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function() {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    // listen for mqtt_message events
+    // when a new message is received, log and append the data to the page
+    socket.on('mqtt_message', function(data) {
+      console.log(data);
+      var jumlah =  data['jumlah'];
+      var mukaada =  data['muka'];
+      var nama =  data['name'];
+      document.getElementById("subscribe_messages").innerHTML = jumlah;
+      document.getElementById("muka_ada").innerHTML = mukaada;
+      document.getElementById("kiminonawa").innerHTML = nama;
+    })
+  });
+</script>
+<p>silahkan masukan wajah yang mempunyuai akses</p>
+<form action="/inputface" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <input type="submit" value="Upload">
+</form>
+<p>If you click the "Submit" button, the form-data will be sent to a page called "/inputface".</p>
+<br/>
+<br/>
+
+<label for="muka_ada">Muka:</label><br>
+<h5 id="muka_ada"></h5>
+<label for="kiminonawa">Name:</label><br>
+<h5 id="kiminonawa"></h5>
+<label for="subscribe_messages">Pesan:</label><br>
+<h5 id="subscribe_messages"></h5>
+
+</body>
+</html>

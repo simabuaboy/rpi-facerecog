@@ -1,21 +1,42 @@
+import os.path
+from glob import glob
+import codecs, json
 import numpy as np
-import codecs, json 
 import face_recognition
-known_image = face_recognition.load_image_file("../images/2020-04-17-184126.jpg")
-unknown_image = face_recognition.load_image_file("../images/barack-obama-12782369-1-402.jpg")
 
-biden_encoding = face_recognition.face_encodings(known_image)[0]
-unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
-b = biden_encoding.tolist()
-file_path = "./data/faces/path.json" ## your path variable
-json.dump(b, codecs.open(file_path, 'w', encoding='utf-8'), separators=(',', ':'), sort_keys=True, indent=4) ### this saves the array in .json format
+pattern = os.path.join('./data/faces/','*.json')
+is_obama = 0
+face_found = 0
+name = ''
 
-obj_text = codecs.open(file_path, 'r', encoding='utf-8').read()
-b_new = json.loads(obj_text)
-a_new = np.array(b_new)
+def get_face(face_found, is_obama, name):
+    
+    result = {
+        "face_found_in_image": face_found,
+        "is_picture_of_obama": is_obama,
+        "name" : name
+    }
+    return result
 
-print(type(a_new))
-# print(biden_encoding)
-# print(unknown_encoding)
+for file_name in glob(pattern):
+    obj_text = codecs.open(file_name, 'r', encoding='utf-8').read()
+    b_new = json.loads(obj_text)
+    a_new = np.array(b_new)
+    known_face_encoding = np.array(a_new)
+    known_face_encoding = np.array(a_new)
+    img = face_recognition.load_image_file("../images/obama.jpg")
+    unknown_face_encodings = face_recognition.face_encodings(img)
+    match_results = face_recognition.compare_faces([known_face_encoding], unknown_face_encodings[0])
 
-results = face_recognition.compare_faces([biden_encoding], unknown_encoding)
+    if len(unknown_face_encodings) > 0:
+        face_found = 1
+        if match_results[0]:
+            is_obama = 1
+            name = file_name
+            print(get_face(face_found, is_obama, name))
+       
+            
+
+
+
+

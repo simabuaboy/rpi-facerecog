@@ -57,6 +57,7 @@ def upload_image():
 
 def get_face(face_found, is_obama, nama):
     if face_found == 1:
+        mqtt.publish('helloop', "1")
         ketemu = "founded"
     result = {
         "is_there_face": ketemu,
@@ -81,7 +82,6 @@ def search_face_from_json(file_stream):
             match_results = face_recognition.compare_faces([known_face_encoding], unknown_face_encodings[0])
             face_found = 1
             if match_results[0]:
-                mqtt.publish('helloop', "1")
                 is_obama = 1
                 nama = name
                 return get_face(face_found, is_obama, nama)
